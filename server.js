@@ -12,10 +12,15 @@ const port = 3000;
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+
+// Get all the divisions
 app.get('/api/divisions', (req, res) => {
     const allDivisions = divisions.map(division => ({
         id: division.id,
@@ -25,6 +30,8 @@ app.get('/api/divisions', (req, res) => {
     res.send(allDivisions);
 });
 
+
+// Get all the districts
 app.get('/api/districts', (req, res) => {
     const allDistricts = divisions.flatMap(division => 
         division.districts.map(district => ({
@@ -33,7 +40,39 @@ app.get('/api/districts', (req, res) => {
             bengaliName: district.bengaliName
         }))
     );
-    res.send(allDistricts);
+    res.json(allDistricts);
+});
+
+// Get districts of a division
+app.get('/api/division/:division_name', (req, res) => {
+    const divisionName = req.params.division_name.charAt(0).toUpperCase() + req.params.division_name.slice(1).toLowerCase();
+    
+    const division = divisions.find(division => division.name === divisionName);
+
+    if (!division) {
+        return res.status(404).json({
+            status: {
+                code: 404,
+                message: "Not Found",
+            },
+            error: "The requested division was not found. Please check the API documentation."
+        });
+    }
+
+    res.json(division.districts);
+});
+
+
+
+// Catch-all route for undefined endpoints
+app.use((req, res) => {
+    res.status(404).json({
+        status: {
+            code: 404,
+            message: "Not Found",
+        },
+        error: "The requested route was not found. Please check the API documentation."
+    });
 });
 
 app.listen(port, () => {
