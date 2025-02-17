@@ -3,6 +3,11 @@ import divisions from "./data.js";
 const app = express();
 const port = 3000
 
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html')
+})
+
 app.get('/api/divisions', (req, res) => {
     const allDivisions = divisions.map(division => {
         return {
