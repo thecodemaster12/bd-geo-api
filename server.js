@@ -58,17 +58,18 @@ app.get('/api/upazilas', (req, res) => {
     res.json(allUpazilas);
 });
 
+
 // Get districts of a division
 app.get('/api/division/:division_name', (req, res) => {
     const divisionName = req.params.division_name.charAt(0).toUpperCase() + req.params.division_name.slice(1).toLowerCase();
     
-    const division = divisions.find(division => division.name === divisionName);
+    const division = divisions.find(division => division.name === divisionName || division.bengaliName === divisionName);
 
     if (!division) {
         return res.status(404).json({
             status: {
-                code: 404x,
-                message: "Division Not Found",
+                code: 404,
+                message: "Districts Not Found",
             }
         });
     }
@@ -81,7 +82,7 @@ app.get('/api/district/:district_name', (req, res) => {
     const districtName = req.params.district_name.charAt(0).toUpperCase() + req.params.district_name.slice(1).toLowerCase();
 
     for (const division of divisions) {
-        const district = division.districts.find(dis => dis.name === districtName);
+        const district = division.districts.find(dis => dis.name === districtName || dis.bengaliName === districtName);
 
         if (district) {
             return res.json(district.upazilas);
@@ -91,7 +92,7 @@ app.get('/api/district/:district_name', (req, res) => {
     return res.status(404).json({
         status: {
             code: 404,
-            message: "District Not Found",
+            message: "Upazilas Not Found",
         }
     });
 
