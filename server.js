@@ -43,6 +43,21 @@ app.get('/api/districts', (req, res) => {
     res.json(allDistricts);
 });
 
+
+// Get all the upazilas
+app.get('/api/upazilas', (req, res) => {
+    const allUpazilas = divisions.map(division => 
+        division.districts.flatMap(district => 
+            district.upazilas.map(upazila => ({
+                id: upazila.id,
+                name: upazila.name,
+                bengaliName: upazila.bengaliName
+            }))
+        )
+    ).flat();
+    res.json(allUpazilas);
+});
+
 // Get districts of a division
 app.get('/api/division/:division_name', (req, res) => {
     const divisionName = req.params.division_name.charAt(0).toUpperCase() + req.params.division_name.slice(1).toLowerCase();
@@ -52,7 +67,7 @@ app.get('/api/division/:division_name', (req, res) => {
     if (!division) {
         return res.status(404).json({
             status: {
-                code: 404,
+                code: 404x,
                 message: "Division Not Found",
             }
         });
