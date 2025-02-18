@@ -53,13 +53,33 @@ app.get('/api/division/:division_name', (req, res) => {
         return res.status(404).json({
             status: {
                 code: 404,
-                message: "Not Found",
-            },
-            error: "The requested division was not found. Please check the API documentation."
+                message: "Division Not Found",
+            }
         });
     }
 
     res.json(division.districts);
+});
+
+// Get upazila of a district
+app.get('/api/district/:district_name', (req, res) => {
+    const districtName = req.params.district_name.charAt(0).toUpperCase() + req.params.district_name.slice(1).toLowerCase();
+
+    for (const division of divisions) {
+        const district = division.districts.find(dis => dis.name === districtName);
+
+        if (district) {
+            return res.json(district.upazilas);
+        }
+    }
+
+    return res.status(404).json({
+        status: {
+            code: 404,
+            message: "District Not Found",
+        }
+    });
+
 });
 
 
